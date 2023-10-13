@@ -24,16 +24,16 @@ from talentVerify import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    re_path('r^api/company/$', views.company_list),
-    re_path('r^api/departments/$', views.departments_list),
-    re_path('r^api/role/$', views.role_list),
-    re_path('r^api/employees/$', views.employees_list),
-    re_path('r^api/role_duties/$', views.role_duties_list),
+    re_path('api/company/', views.company_list),
+    re_path('api/departments/', views.departments_list),
+    re_path('api/role/', views.role_list),
+    re_path('api/employees/', views.employees_list),
+    re_path('api/role_duties/', views.role_duties_list),
 
-    re_path('r^api/company/([0-9])$', views.company_detail),
-    re_path('r^api/departments/([0-9])$', views.departments_detail),
-    re_path('r^api/role/([0-9])$', views.role_detail),
-    re_path('r^api/employees/([0-9])$', views.employees_detail),
-    re_path('r^api/role_duties/([0-9])$', views.role_duties_detail),
+    re_path('api/company/([0-9])', views.company_detail),
+    re_path('api/departments/([0-9])', views.departments_detail),
+    re_path('api/role/([0-9])', views.role_detail),
+    re_path('api/employees/([0-9])$', views.employees_detail),
+    re_path('api/role_duties/([0-9])', views.role_duties_detail),
     # path('api/', include(router.urls)),
 ]

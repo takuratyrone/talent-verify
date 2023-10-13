@@ -24,7 +24,7 @@ class Employees(models.Model):
     department = models.CharField(max_length=50)
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
     date_started = models.DateField("Start Date", auto_now_add=True)
-    date_left = models.DateField()
+    date_left = models.DateField(null=True)
 
 class Role_Duties(models.Model):
     role_id = models.ForeignKey(Role, on_delete=models.CASCADE)
