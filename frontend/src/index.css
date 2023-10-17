@@ -69,6 +69,7 @@ section > h1, section > h2 {
 .btn {
   width: max-content;
   display: inline-block;
+  background: transparent;
   color: var(--color-dark);
   padding: 0.75rem 1.2rem;
   border-radius: 0.4rem;
@@ -86,6 +87,12 @@ section > h1, section > h2 {
 .btn-primary {
   background: var(--color-primary);
   color: var(--color-white);
+}
+
+.btn-primary:hover {
+  background: var(--color-white);
+  color: var(--color-dark);
+  border-color: var(--color-primary);
 }
 
 img {

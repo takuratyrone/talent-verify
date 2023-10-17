@@ -5,12 +5,17 @@
     
 }
 
+.forms-content {
+    transition: var(--transition);
+}
+
 form {
     /* display: flex;
     flex-direction: column; */
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1.2rem;
+    margin: 1rem auto 2rem;
 }
 
 input, textarea {
@@ -21,4 +26,18 @@ input, textarea {
     border: 2px solid var(--color-primary-variant);
     resize: none;
     color: #000;
+}
+
+table {
+    width: 100%;
+    margin-bottom: 3rem;
+}
+
+table, th, td {
+    text-align: left;
+    /* align-items: start; */
+    margin-bottom: 0.7rem;
+    border-bottom: 2px solid var(--color-bg-variant);
+    border-collapse: collapse;
+    padding: 0.3rem 0.5rem;
 }
