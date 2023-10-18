@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Company, Departments, Role, Employees, Role_Duties
+from .models import Company, Departments, Employees, Role_Duties
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,14 +25,6 @@ class DepartmentsSerializer(serializers.ModelSerializer):
             'department'
         )
 
-class RoleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Role
-        fields = (
-            'id',
-            'role'
-        )
-
 class EmployeesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employees
@@ -41,7 +33,7 @@ class EmployeesSerializer(serializers.ModelSerializer):
             'employee_name',
             'employee_id',
             'department',
-            'role_id',
+            'role_duty_id',
             'date_started',
             'date_left'
         )
@@ -50,6 +42,7 @@ class  RoleDutiesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role_Duties
         fields = (
-            'role_id',
+            'id',
+            'role',
             'duty'
         )

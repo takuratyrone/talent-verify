@@ -26,14 +26,17 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path('api/company/', views.company_list),
     re_path('api/departments/', views.departments_list),
-    re_path('api/role/', views.role_list),
     re_path('api/employees/', views.employees_list),
-    re_path('api/role_duties/', views.role_duties_list),
+    re_path('api/roles/', views.role_duties_list),
 
     re_path('api/company/([0-9])', views.company_detail),
     re_path('api/departments/([0-9])', views.departments_detail),
-    re_path('api/role/([0-9])', views.role_detail),
     re_path('api/employees/([0-9])$', views.employees_detail),
-    re_path('api/role_duties/([0-9])', views.role_duties_detail),
+    re_path('api/roles/([0-9])', views.role_duties_detail),
     # path('api/', include(router.urls)),
+
+    re_path('api/company_search/', views.company_search),
+    re_path('api/employee_search/', views.employee_search),
+    re_path('api/department_search/', views.department_search),
+    re_path('api/role_search/', views.role_search),
 ]

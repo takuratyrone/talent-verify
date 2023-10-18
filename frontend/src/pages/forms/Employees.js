@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './forms.css';
+import axios from 'axios';
 
 const Employees = () => {
 
@@ -11,20 +12,24 @@ const Employees = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
+    const [searchEmployee, setSearchEmployee] = useState('');
+    const [searchResult, setSearchResult] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false)
+
     const handleAddEmployee = (e) => {
 
         e.preventDefault();
 
         if (employeeName.trim() !== '' && employeeId.trim() !== '' && department.trim() !== '' &&
-            role.trim() !== '' && startDate.trim() !== '' && endDate.trim() !== ''
+            role.trim() !== '' && startDate.trim() !== '' 
         ) {
             const newEmployee = {
-                id: Date.now(),
                 employee_name: employeeName,
-                employee_ID: employeeId,
+                employee_id: employeeId,
                 department: department,
-                role_id: role,
-                date_stated: startDate,
+                role_duty: role,
+                date_started: startDate,
                 date_left: endDate,
             };
             setEmployees([...employees, newEmployee]);
@@ -35,6 +40,35 @@ const Employees = () => {
             setStartDate('');
             setEndDate('');
         }
+    }
+
+    const handleSubmit = () => {
+        axios.post('http://localhost:8000/api/employees/', employees)
+            .then((res) => {
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+
+        setEmployees([]);
+    }
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        setLoading(true)
+        axios.get('http://localhost:8000/api/employee_search/', {
+            params: {search_query: searchEmployee},
+        })
+            .then((res) => {
+                console.log(res.data);
+                setSearchResult(res.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.log(err);
+                setError(err);
+            })
     }
 
     return (
@@ -90,25 +124,64 @@ const Employees = () => {
                         <th>Start Date</th>
                         <th>End Date</th>
                     </tr>
-                    {employees.map((employee) => (
-                        <tr key={employee.id}>
-                            <td>{ employee.employeeName }</td>
-                            <td>{ employee.employeeId }</td>
+                    {employees.map((employee, index) => (
+                        <tr key={index}>
+                            <td>{ employee.employee_name }</td>
+                            <td>{ employee.employee_id }</td>
                             <td>{ employee.department }</td>
-                            <td>{ employee.role }</td>
-                            <td>{ employee.startDate }</td>
-                            <td>{ employee.endDate }</td>
+                            <td>{ employee.role_duty }</td>
+                            <td>{ employee.date_started }</td>
+                            <td>{ employee.date_left }</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <button className="btn btn-primary">Submit</button>
+            <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>
 
-            <form action="">
-                <input type="text" placeholder='Search' />
-                <button className="btn btn-primary">Search</button>
+            <form onSubmit={handleSearch}>
+                <input 
+                    type="text" 
+                    placeholder='Search' 
+                    value={searchEmployee}
+                    onChange={(e) => setSearchEmployee(e.target.value)}
+                />
+                <button className="btn btn-primary" type='submit'>Search</button>
                 {/* <input type="button" value="Search" className='btn btn-primary' /> */}
             </form>
+
+            { loading && <div>Loading...</div> }
+            { error && <div>{ error }</div> }
+            
+            {
+                ( searchResult &&
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Eployee Name</th>
+                                <th>Employee ID</th>
+                                <th>Department</th>
+                                <th>Role</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                            </tr>
+                            { searchResult.map((employeeData, index) => (
+                                <tr key={index}>
+                                    <td>{ employeeData.employee_name }</td>
+                                    <td>{ employeeData.employee_id }</td>
+                                    <td>{ employeeData.department }</td>
+                                    <td>{ employeeData.role_duty }</td>
+                                    <td>{ employeeData.date_started }</td>
+                                    <td>{ employeeData.date_left }</td>
+                                    <td>
+                                        <button className="btn btn-primary">Update</button>
+                                        <button className="btn btn-primary">Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )
+            }
         </div>
     );
 }

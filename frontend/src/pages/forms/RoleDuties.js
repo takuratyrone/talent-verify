@@ -1,26 +1,46 @@
 import { useState } from 'react';
 import './forms.css';
+import axios from 'axios';
 
 const RoleDuties = () => {
 
     const [roleDuties, setRoleDuties] = useState([]);
-    const [role, setRole] = useState('');
+    const [roleName, setRoleName] = useState('');
     const [duty, setDuty] = useState('');
+
+    const csrfToken = document.cookie.replace(
+        /(?:(?:^|.*;\s*)csrftoken\s*=\s*([^;]*).*$)|^.*$/,
+        '$1'
+    );
 
     const handleAddRoleDuties = (e) => {
 
         e.preventDefault();
 
-        if (duty.trim() !== '' && role.trim() !== '') {
+        if (duty.trim() !== '' && roleName.trim() !== '') {
             const newRoleDuty = {
-                id: Date.now,
-                role_id: role,
+                role: roleName,
                 duty: duty,
             }
             setRoleDuties([...roleDuties, newRoleDuty]);
             setDuty('');
-            setRole('');
+            setRoleName('');
         }
+    }
+
+    const handleSubmit = () => {
+        axios.post('api/roles/', roleDuties, {
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            },
+        })
+            .then((res) => {
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
     return (
@@ -30,8 +50,8 @@ const RoleDuties = () => {
                 <input 
                     type="text" 
                     placeholder='Role' 
-                    value={role} 
-                    onChange={(e) => setRole(e.target.value)}
+                    value={roleName} 
+                    onChange={(e) => setRoleName(e.target.value)}
                 />
                 <input 
                     type="text" 
@@ -48,15 +68,15 @@ const RoleDuties = () => {
                         <th>Role</th>
                         <th>Duty</th>
                     </tr>
-                    {roleDuties.map((roleDuty) => (
-                        <tr key={roleDuty.id}>
-                            <td>{ roleDuty.role_id }</td>
+                    {roleDuties.map((roleDuty, index) => (
+                        <tr key={index}>
+                            <td>{ roleDuty.role }</td>
                             <td>{ roleDuty.duty }</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <button className="btn btn-primary">Submit</button>
+            <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>
 
             <form action="">
                 <input type="text" placeholder='Search' />

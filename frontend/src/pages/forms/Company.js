@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './forms.css';
+import axios from 'axios';
 
 const Company = () => {
 
@@ -13,6 +14,11 @@ const Company = () => {
     const [contactPhone, setContactPhone] = useState('');
     const [email, setEmail] = useState('');
 
+    const [searchCompany, setSearchCompany] = useState('');
+    const [searchResult, setSearchResult] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false)
+
     const handleAddCompany = (e) => {
 
         e.preventDefault();
@@ -22,10 +28,9 @@ const Company = () => {
             && contactPhone.trim() !== '' && email.trim() !== ''
         ) {
             const newCompany = {
-                id: Date.now(),
                 company_name: companyName,
                 date_of_registration: regDate,
-                company_reg_number: companyRegNum,
+                company_registration_number: companyRegNum,
                 address: address,
                 contact_person: contactPerson,
                 number_of_employees: numOfEmployees,
@@ -44,6 +49,35 @@ const Company = () => {
         }
     }
 
+    const handleSubmit = () => {
+        axios.post('http://localhost:8000/api/company/', companies)
+            .then((res) => {
+                console.log(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+
+        setCompanies([]);
+    }
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        setLoading(true)
+        axios.get('http://localhost:8000/api/company_search/', {
+            params: {search_query: searchCompany},
+        })
+            .then((res) => {
+                console.log(res.data);
+                setSearchResult(res.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.log(err);
+                setError(err);
+            })
+    }
+
     return (
         <div className="company-container">
             <h1>Company</h1>
@@ -53,6 +87,7 @@ const Company = () => {
                     placeholder='Company Name' 
                     value={companyName} 
                     onChange={(e) => setCompanyName(e.target.value)}
+                    required
                 />
                 <input 
                     type="text" 
@@ -111,8 +146,8 @@ const Company = () => {
                         <th>Phone</th>
                         <th>Email</th>
                     </tr>
-                    {companies.map((company) => (
-                        <tr key={company.id}>
+                    {companies.map((company, index) => (
+                        <tr key={index}>
                             <td>{ company.company_name }</td>
                             <td>{ company.date_of_registration }</td>
                             <td>{ company.company_reg_number }</td>
@@ -125,13 +160,57 @@ const Company = () => {
                     ))}
                 </tbody>
             </table>
-            <button className="btn btn-primary">Submit</button>
+            <button className="btn btn-primary" onClick={handleSubmit}>Submit</button>
 
             <form action="">
-                <input type="text" placeholder='Search' />
-                <button className="btn btn-primary">Search</button>
+                <input 
+                    type="text" 
+                    placeholder='Search Company Name/ID' 
+                    value={searchCompany}
+                    onChange={(e) => setSearchCompany(e.target.value)}
+                />
+                <button className="btn btn-primary" onClick={handleSearch}>Search</button>
                 {/* <input type="button" value="Search" className='btn btn-primary' /> */}
             </form>
+
+            { loading && <div>Loading...</div> }
+            { error && <div>{ error }</div> }
+            
+            {
+                ( searchResult &&
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Company Name</th>
+                                <th>Reg Date</th>
+                                <th>Reg Number</th>
+                                <th>Address</th>
+                                <th>Contact Person</th>
+                                <th>Employees</th>
+                                <th>Phone</th>
+                                <th>Email</th> 
+                            </tr>
+                            { searchResult.map((companyData, index) => (
+                                <tr key={index}>
+                                    <td>{ companyData.company_name }</td>
+                                    <td>{ companyData.date_of_registration }</td>
+                                    <td>{ companyData.company_registration_number }</td>
+                                    <td>{ companyData.address }</td>
+                                    <td>{ companyData.contact_person }</td>
+                                    <td>{ companyData.number_of_employees }</td>
+                                    <td>{ companyData.contact_phone }</td>
+                                    <td>{ companyData.email_address }</td>
+                                    <td>
+                                        <button className="btn btn-primary">Update</button>
+                                        <button className="btn btn-primary">Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )
+            }
+
         </div>
     );
 }
